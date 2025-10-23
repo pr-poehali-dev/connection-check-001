@@ -380,8 +380,31 @@ export default function Index() {
           </Button>
         </div>
 
-        <Tabs defaultValue="clicker" className="space-y-6 pb-6">
-          <TabsContent value="clicker" className="space-y-6">
+        <Tabs defaultValue="clicker" className="space-y-6">
+          <TabsList className="fixed bottom-6 left-1/2 -translate-x-1/2 grid grid-cols-5 gap-2 bg-card/95 backdrop-blur-sm p-3 shadow-2xl border-2 border-primary/40 rounded-2xl max-w-3xl w-[95%] z-50">
+            <TabsTrigger value="clicker" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="MousePointerClick" size={20} className="mb-1" />
+              <span className="text-xs">Кликер</span>
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="User" size={20} className="mb-1" />
+              <span className="text-xs">Профиль</span>
+            </TabsTrigger>
+            <TabsTrigger value="shop" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="ShoppingBag" size={20} className="mb-1" />
+              <span className="text-xs">Магазин</span>
+            </TabsTrigger>
+            <TabsTrigger value="games" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="Gamepad2" size={20} className="mb-1" />
+              <span className="text-xs">Игры</span>
+            </TabsTrigger>
+            <TabsTrigger value="achievements" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="Trophy" size={20} className="mb-1" />
+              <span className="text-xs">Награды</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="clicker" className="space-y-6 pb-32">
             <Card className="p-8 text-center bg-card border-primary/20">
               <div className="mb-4">
                 <p className="text-sm text-muted-foreground mb-2">Баланс</p>
@@ -409,7 +432,7 @@ export default function Index() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="profile" className="space-y-6">
+          <TabsContent value="profile" className="space-y-6 pb-32">
             <Card className="p-6 bg-card border-primary/20">
               <h2 className="text-2xl font-bold mb-6 text-primary">Профиль игрока</h2>
               
@@ -482,7 +505,7 @@ export default function Index() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="shop" className="space-y-6">
+          <TabsContent value="shop" className="space-y-6 pb-32">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="p-6 bg-card border-primary/20 hover:border-primary transition-colors">
                 <div className="text-center mb-4">
@@ -531,7 +554,7 @@ export default function Index() {
             </div>
           </TabsContent>
 
-          <TabsContent value="games" className="space-y-6">
+          <TabsContent value="games" className="space-y-6 pb-32">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="p-6 bg-card border-primary/20 hover:border-primary transition-colors">
                 <div className="text-center mb-4">
@@ -574,7 +597,7 @@ export default function Index() {
             </div>
           </TabsContent>
 
-          <TabsContent value="achievements" className="space-y-6">
+          <TabsContent value="achievements" className="space-y-6 pb-32">
             <div className="grid md:grid-cols-2 gap-6">
               {ACHIEVEMENTS.map((achievement, index) => {
                 const isUnlocked = currentUser.achievements.includes(achievement.name);
@@ -618,29 +641,6 @@ export default function Index() {
               })}
             </div>
           </TabsContent>
-
-          <TabsList className="fixed bottom-8 left-1/2 -translate-x-1/2 grid grid-cols-5 gap-2 bg-card/95 backdrop-blur-sm p-3 shadow-2xl border-2 border-primary/40 rounded-2xl max-w-3xl w-[95%] z-50">
-            <TabsTrigger value="clicker" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="MousePointerClick" size={20} className="mb-1" />
-              <span className="text-xs">Кликер</span>
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="User" size={20} className="mb-1" />
-              <span className="text-xs">Профиль</span>
-            </TabsTrigger>
-            <TabsTrigger value="shop" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="ShoppingBag" size={20} className="mb-1" />
-              <span className="text-xs">Магазин</span>
-            </TabsTrigger>
-            <TabsTrigger value="games" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="Gamepad2" size={20} className="mb-1" />
-              <span className="text-xs">Игры</span>
-            </TabsTrigger>
-            <TabsTrigger value="achievements" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="Trophy" size={20} className="mb-1" />
-              <span className="text-xs">Награды</span>
-            </TabsTrigger>
-          </TabsList>
         </Tabs>
       </div>
     </div>
