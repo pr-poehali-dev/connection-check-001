@@ -17,6 +17,7 @@ interface User {
   businesses: number;
   houses: number;
   cars: number;
+  lastIncomeTime?: number;
 }
 
 const ACHIEVEMENTS = [
@@ -43,7 +44,8 @@ export default function Index() {
     }
     
     if (savedCurrentUser) {
-      setCurrentUser(JSON.parse(savedCurrentUser));
+      const user = JSON.parse(savedCurrentUser);
+      setCurrentUser(user);
       setShowIntro(false);
     }
 
@@ -53,6 +55,39 @@ export default function Index() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      const incomeInterval = setInterval(() => {
+        const now = Date.now();
+        const lastTime = currentUser.lastIncomeTime || now;
+        const secondsPassed = Math.floor((now - lastTime) / 1000);
+        
+        if (secondsPassed >= 1) {
+          const incomePerSecond = currentUser.businesses * 10 + currentUser.houses * 5 + currentUser.cars * 3;
+          
+          if (incomePerSecond > 0) {
+            const totalIncome = incomePerSecond * secondsPassed;
+            setCurrentUser(prev => {
+              if (!prev) return null;
+              return {
+                ...prev,
+                balance: prev.balance + totalIncome,
+                lastIncomeTime: now
+              };
+            });
+          } else {
+            setCurrentUser(prev => {
+              if (!prev) return null;
+              return { ...prev, lastIncomeTime: now };
+            });
+          }
+        }
+      }, 1000);
+
+      return () => clearInterval(incomeInterval);
+    }
+  }, [currentUser?.businesses, currentUser?.houses, currentUser?.cars]);
 
   useEffect(() => {
     if (currentUser) {
@@ -77,17 +112,18 @@ export default function Index() {
           id: 0,
           username: 'plutka',
           password: '1939',
-          balance: 999999999,
+          balance: 0,
           donateBalance: 999999,
-          achievements: ['Первый капитал', 'Старший барон', 'Бизнесман', 'Legend'],
-          businesses: 100,
-          houses: 50,
-          cars: 25
+          achievements: [],
+          businesses: 0,
+          houses: 0,
+          cars: 0,
+          lastIncomeTime: Date.now()
         };
         setCurrentUser(adminUser);
         toast.success('Добро пожаловать, Admin!');
       } else if (user) {
-        setCurrentUser(user);
+        setCurrentUser({ ...user, lastIncomeTime: Date.now() });
         toast.success(`Добро пожаловать, ${user.username}!`);
       } else {
         toast.error('Неверный логин или пароль');
@@ -107,7 +143,8 @@ export default function Index() {
         achievements: [],
         businesses: 0,
         houses: 0,
-        cars: 0
+        cars: 0,
+        lastIncomeTime: Date.now()
       };
 
       const updatedUsers = [...users, newUser];
@@ -155,7 +192,7 @@ export default function Index() {
         balance: currentUser.balance - cost,
         businesses: currentUser.businesses + 1
       });
-      toast.success(`Бизнес куплен за ${cost.toLocaleString()}!`);
+      toast.success(`Бизнес куплен за ${cost.toLocaleString()}! Доход: +10/сек`);
     } else {
       toast.error('Недостаточно средств');
     }
@@ -171,7 +208,7 @@ export default function Index() {
         balance: currentUser.balance - cost,
         houses: currentUser.houses + 1
       });
-      toast.success(`Дом куплен за ${cost.toLocaleString()}!`);
+      toast.success(`Дом куплен за ${cost.toLocaleString()}! Доход: +5/сек`);
     } else {
       toast.error('Недостаточно средств');
     }
@@ -187,7 +224,7 @@ export default function Index() {
         balance: currentUser.balance - cost,
         cars: currentUser.cars + 1
       });
-      toast.success(`Машина куплена за ${cost.toLocaleString()}!`);
+      toast.success(`Машина куплена за ${cost.toLocaleString()}! Доход: +3/сек`);
     } else {
       toast.error('Недостаточно средств');
     }
@@ -328,11 +365,13 @@ export default function Index() {
     );
   }
 
+  const incomePerSecond = currentUser.businesses * 10 + currentUser.houses * 5 + currentUser.cars * 3;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-[#0F3460] to-[#1A1A2E] p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4ECDC4] to-[#FF6B35]">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-[#0F3460] to-[#1A1A2E] pb-24">
+      <div className="max-w-6xl mx-auto p-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4ECDC4] to-[#FF6B35]">
             GAMESPLUT
           </h1>
           <Button onClick={handleLogout} variant="outline" className="border-primary/30">
@@ -342,47 +381,29 @@ export default function Index() {
         </div>
 
         <Tabs defaultValue="clicker" className="space-y-6">
-          <TabsList className="grid grid-cols-5 gap-2 bg-card/50 p-2">
-            <TabsTrigger value="clicker" className="data-[state=active]:bg-primary">
-              <Icon name="MousePointerClick" size={16} className="mr-2" />
-              Кликер
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="data-[state=active]:bg-primary">
-              <Icon name="User" size={16} className="mr-2" />
-              Профиль
-            </TabsTrigger>
-            <TabsTrigger value="shop" className="data-[state=active]:bg-primary">
-              <Icon name="ShoppingBag" size={16} className="mr-2" />
-              Магазин
-            </TabsTrigger>
-            <TabsTrigger value="games" className="data-[state=active]:bg-primary">
-              <Icon name="Gamepad2" size={16} className="mr-2" />
-              Игры
-            </TabsTrigger>
-            <TabsTrigger value="achievements" className="data-[state=active]:bg-primary">
-              <Icon name="Trophy" size={16} className="mr-2" />
-              Награды
-            </TabsTrigger>
-          </TabsList>
-
           <TabsContent value="clicker" className="space-y-6">
             <Card className="p-8 text-center bg-card border-primary/20">
-              <div className="mb-8">
+              <div className="mb-4">
                 <p className="text-sm text-muted-foreground mb-2">Баланс</p>
-                <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#FF6B35]">
-                  {currentUser.balance.toLocaleString()}
+                <p className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#FF6B35]">
+                  {Math.floor(currentUser.balance).toLocaleString()}
                 </p>
+                {incomePerSecond > 0 && (
+                  <p className="text-sm text-primary mt-2">
+                    +{incomePerSecond}/сек пассивный доход
+                  </p>
+                )}
               </div>
 
               <Button
                 onClick={handleClick}
                 size="lg"
-                className="w-64 h-64 rounded-full bg-gradient-to-br from-[#4ECDC4] to-[#FF6B35] hover:scale-105 transition-transform text-2xl font-bold animate-pulse-glow"
+                className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-[#4ECDC4] to-[#FF6B35] hover:scale-105 transition-transform text-xl md:text-2xl font-bold animate-pulse-glow"
               >
                 <div className="flex flex-col items-center gap-4">
-                  <Icon name="HandCoins" size={80} />
+                  <Icon name="HandCoins" size={60} />
                   <span>КЛИКАЙ!</span>
-                  <span className="text-xl">+100</span>
+                  <span className="text-lg md:text-xl">+100</span>
                 </div>
               </Button>
             </Card>
@@ -395,19 +416,19 @@ export default function Index() {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">Баланс</p>
-                  <p className="text-2xl font-bold text-[#FFD700]">{currentUser.balance.toLocaleString()}</p>
+                  <p className="text-xl md:text-2xl font-bold text-[#FFD700]">{Math.floor(currentUser.balance).toLocaleString()}</p>
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">Баланс доната</p>
-                  <p className="text-2xl font-bold text-[#4ECDC4]">{currentUser.donateBalance.toLocaleString()}</p>
+                  <p className="text-xl md:text-2xl font-bold text-[#4ECDC4]">{currentUser.donateBalance.toLocaleString()}</p>
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">ID</p>
-                  <p className="text-2xl font-bold">#{currentUser.id}</p>
+                  <p className="text-xl md:text-2xl font-bold">#{currentUser.id}</p>
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">Ник</p>
-                  <p className="text-2xl font-bold">{currentUser.username}</p>
+                  <p className="text-xl md:text-2xl font-bold">{currentUser.username}</p>
                 </div>
               </div>
 
@@ -415,7 +436,10 @@ export default function Index() {
                 <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <Icon name="Building2" size={24} className="text-primary" />
-                    <span className="font-medium">Бизнесы</span>
+                    <div>
+                      <span className="font-medium block">Бизнесы</span>
+                      <span className="text-xs text-muted-foreground">+10/сек каждый</span>
+                    </div>
                   </div>
                   <Badge variant="secondary" className="text-lg">{currentUser.businesses}</Badge>
                 </div>
@@ -423,7 +447,10 @@ export default function Index() {
                 <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <Icon name="Home" size={24} className="text-primary" />
-                    <span className="font-medium">Дома</span>
+                    <div>
+                      <span className="font-medium block">Дома</span>
+                      <span className="text-xs text-muted-foreground">+5/сек каждый</span>
+                    </div>
                   </div>
                   <Badge variant="secondary" className="text-lg">{currentUser.houses}</Badge>
                 </div>
@@ -431,7 +458,10 @@ export default function Index() {
                 <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <Icon name="Car" size={24} className="text-primary" />
-                    <span className="font-medium">Машины</span>
+                    <div>
+                      <span className="font-medium block">Машины</span>
+                      <span className="text-xs text-muted-foreground">+3/сек каждая</span>
+                    </div>
                   </div>
                   <Badge variant="secondary" className="text-lg">{currentUser.cars}</Badge>
                 </div>
@@ -458,10 +488,11 @@ export default function Index() {
                 <div className="text-center mb-4">
                   <Icon name="Building2" size={48} className="mx-auto mb-3 text-primary" />
                   <h3 className="text-xl font-bold mb-2">Бизнес</h3>
-                  <p className="text-3xl font-bold text-[#FFD700] mb-2">
+                  <p className="text-2xl md:text-3xl font-bold text-[#FFD700] mb-2">
                     {(50000 * (currentUser.businesses + 1)).toLocaleString()}
                   </p>
-                  <p className="text-sm text-muted-foreground">У вас: {currentUser.businesses}</p>
+                  <p className="text-sm text-muted-foreground mb-1">У вас: {currentUser.businesses}</p>
+                  <p className="text-xs text-primary">Доход: +10/сек</p>
                 </div>
                 <Button onClick={buyBusiness} className="w-full bg-primary hover:bg-primary/90">
                   Купить
@@ -472,10 +503,11 @@ export default function Index() {
                 <div className="text-center mb-4">
                   <Icon name="Home" size={48} className="mx-auto mb-3 text-primary" />
                   <h3 className="text-xl font-bold mb-2">Дом</h3>
-                  <p className="text-3xl font-bold text-[#FFD700] mb-2">
+                  <p className="text-2xl md:text-3xl font-bold text-[#FFD700] mb-2">
                     {(100000 * (currentUser.houses + 1)).toLocaleString()}
                   </p>
-                  <p className="text-sm text-muted-foreground">У вас: {currentUser.houses}</p>
+                  <p className="text-sm text-muted-foreground mb-1">У вас: {currentUser.houses}</p>
+                  <p className="text-xs text-primary">Доход: +5/сек</p>
                 </div>
                 <Button onClick={buyHouse} className="w-full bg-primary hover:bg-primary/90">
                   Купить
@@ -486,10 +518,11 @@ export default function Index() {
                 <div className="text-center mb-4">
                   <Icon name="Car" size={48} className="mx-auto mb-3 text-primary" />
                   <h3 className="text-xl font-bold mb-2">Машина</h3>
-                  <p className="text-3xl font-bold text-[#FFD700] mb-2">
+                  <p className="text-2xl md:text-3xl font-bold text-[#FFD700] mb-2">
                     {(75000 * (currentUser.cars + 1)).toLocaleString()}
                   </p>
-                  <p className="text-sm text-muted-foreground">У вас: {currentUser.cars}</p>
+                  <p className="text-sm text-muted-foreground mb-1">У вас: {currentUser.cars}</p>
+                  <p className="text-xs text-primary">Доход: +3/сек</p>
                 </div>
                 <Button onClick={buyCar} className="w-full bg-primary hover:bg-primary/90">
                   Купить
@@ -585,6 +618,29 @@ export default function Index() {
               })}
             </div>
           </TabsContent>
+
+          <TabsList className="fixed bottom-4 left-1/2 -translate-x-1/2 grid grid-cols-5 gap-2 bg-card/95 backdrop-blur-sm p-2 shadow-2xl border border-primary/20 max-w-3xl w-[95%]">
+            <TabsTrigger value="clicker" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="MousePointerClick" size={20} className="mb-1" />
+              <span className="text-xs">Кликер</span>
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="User" size={20} className="mb-1" />
+              <span className="text-xs">Профиль</span>
+            </TabsTrigger>
+            <TabsTrigger value="shop" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="ShoppingBag" size={20} className="mb-1" />
+              <span className="text-xs">Магазин</span>
+            </TabsTrigger>
+            <TabsTrigger value="games" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="Gamepad2" size={20} className="mb-1" />
+              <span className="text-xs">Игры</span>
+            </TabsTrigger>
+            <TabsTrigger value="achievements" className="data-[state=active]:bg-primary flex flex-col py-3">
+              <Icon name="Trophy" size={20} className="mb-1" />
+              <span className="text-xs">Награды</span>
+            </TabsTrigger>
+          </TabsList>
         </Tabs>
       </div>
     </div>
