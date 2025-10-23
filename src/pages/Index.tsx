@@ -381,26 +381,26 @@ export default function Index() {
         </div>
 
         <Tabs defaultValue="clicker" className="space-y-6">
-          <TabsList className="fixed bottom-6 left-1/2 -translate-x-1/2 grid grid-cols-5 gap-2 bg-card/95 backdrop-blur-sm p-3 shadow-2xl border-2 border-primary/40 rounded-2xl max-w-3xl w-[95%] z-50">
-            <TabsTrigger value="clicker" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="MousePointerClick" size={20} className="mb-1" />
-              <span className="text-xs">Кликер</span>
+          <TabsList className="fixed bottom-4 left-1/2 -translate-x-1/2 grid grid-cols-5 gap-1 bg-[#1A1A2E]/98 backdrop-blur-xl p-2 shadow-2xl border border-primary/30 rounded-xl max-w-2xl w-[98%] z-50">
+            <TabsTrigger value="clicker" className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all">
+              <Icon name="MousePointerClick" size={24} className="mb-1" />
+              <span className="text-[10px] font-medium">Кликер</span>
             </TabsTrigger>
-            <TabsTrigger value="profile" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="User" size={20} className="mb-1" />
-              <span className="text-xs">Профиль</span>
+            <TabsTrigger value="profile" className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all">
+              <Icon name="User" size={24} className="mb-1" />
+              <span className="text-[10px] font-medium">Профиль</span>
             </TabsTrigger>
-            <TabsTrigger value="shop" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="ShoppingBag" size={20} className="mb-1" />
-              <span className="text-xs">Магазин</span>
+            <TabsTrigger value="shop" className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all">
+              <Icon name="ShoppingBag" size={24} className="mb-1" />
+              <span className="text-[10px] font-medium">Магазин</span>
             </TabsTrigger>
-            <TabsTrigger value="games" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="Gamepad2" size={20} className="mb-1" />
-              <span className="text-xs">Игры</span>
+            <TabsTrigger value="games" className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all">
+              <Icon name="Gamepad2" size={24} className="mb-1" />
+              <span className="text-[10px] font-medium">Игры</span>
             </TabsTrigger>
-            <TabsTrigger value="achievements" className="data-[state=active]:bg-primary flex flex-col py-3">
-              <Icon name="Trophy" size={20} className="mb-1" />
-              <span className="text-xs">Награды</span>
+            <TabsTrigger value="achievements" className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all">
+              <Icon name="Trophy" size={24} className="mb-1" />
+              <span className="text-[10px] font-medium">Награды</span>
             </TabsTrigger>
           </TabsList>
 
