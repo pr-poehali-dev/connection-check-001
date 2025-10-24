@@ -92,11 +92,15 @@ export default function Index() {
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem('gamesplut_current_user', JSON.stringify(currentUser));
-      const updatedUsers = users.map(u => u.id === currentUser.id ? currentUser : u);
-      setUsers(updatedUsers);
-      localStorage.setItem('gamesplut_users', JSON.stringify(updatedUsers));
+      
+      const savedUsers = localStorage.getItem('gamesplut_users');
+      if (savedUsers) {
+        const usersList = JSON.parse(savedUsers);
+        const updatedUsers = usersList.map((u: User) => u.id === currentUser.id ? currentUser : u);
+        localStorage.setItem('gamesplut_users', JSON.stringify(updatedUsers));
+      }
     }
-  }, [currentUser]);
+  }, [currentUser?.balance, currentUser?.businesses, currentUser?.houses, currentUser?.cars, currentUser?.achievements]);
 
   const handleAuth = () => {
     if (!username || !password) {
